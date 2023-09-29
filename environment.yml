@@ -9,4 +9,6 @@ dependencies:
   - pip
   - pip:
     - wfdb
+    - tensorflow
+    - tqdm
 

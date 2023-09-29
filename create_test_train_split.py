@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import pandas as pd
-
 from pathlib import Path
 
 BASE_ECG_PATH = Path("/scratch/ajb5d/ecg/mimic-iv-ecg-diagnostic-electrocardiogram-matched-subset-1.0/")
