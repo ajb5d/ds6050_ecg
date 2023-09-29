@@ -5,11 +5,8 @@ channels:
 dependencies:
   - python=3.10
   - ipykernel
-  - matplotlib
-  - pandas
   - scikit-learn
   - pip
   - pip:
-    - tensorflow==2.11.1
     - wfdb
 
