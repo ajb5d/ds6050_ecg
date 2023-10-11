@@ -11,4 +11,4 @@ module load micromamba
 eval "$(micromamba shell hook --shell=bash)"
 micromamba activate ds6050-ecg
 
-python preprocess_data.py
+python summarize_data.py "$@"
