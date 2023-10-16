@@ -18,17 +18,18 @@ parser = ArgumentParser(
 )
 
 parser.add_argument("--dataset", action = "store", required = True, choices = ['test', 'train', 'val'])
+args = parser.parse_args()
 
 def wfdb_to_example(rec):
     r = wfdb.rdrecord(BASE_ECG_PATH / rec.path)
     dat = r.p_signal
     min = np.min(dat, axis=0)
     max = np.max(dat, axis=0)
+
     if np.any(min == max) or np.any(np.isnan(dat)):
         return None
 
     dat = (dat - np.mean(dat, axis = 0)) / np.std(dat, axis = 0)
-
     gender_value = 1 if rec.gender == "M" else 0
     
     feature = {
@@ -41,7 +42,7 @@ def wfdb_to_example(rec):
     return example_proto.SerializeToString() 
 
 def output_file(target, file_count):
-    retrun str(OUTPUT_DATA_PATH / f"{target}-{file_count:04}.tfrecords")
+    return str(OUTPUT_DATA_PATH / f"{target}-{file_count:04}.tfrecords")
 
 
 ecg_data = pd.read_csv(BASE_DATA_PATH / f"{args.dataset}_ecgs.csv")
