@@ -24,10 +24,10 @@ def wfdb_to_example(rec):
     dat = r.p_signal
     min = np.min(dat, axis=0)
     max = np.max(dat, axis=0)
-    if np.any(min == max):
+    if np.any(min == max) or np.any(np.isnan(dat)):
         return None
-    
-    dat = (dat - min) / (max - min)
+
+    dat = (dat - np.mean(dat, axis = 0)) / np.std(dat, axis = 0)
 
     gender_value = 1 if rec.gender == "M" else 0
     
