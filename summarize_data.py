@@ -27,7 +27,6 @@ import tensorflow as tf
 CANONICAL_SIG_ORDER = ['I', 'II', 'III', 'aVR', 'aVF', 'aVL', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
 
 def wfdb_to_summary(rec):
-
     r = wfdb.rdrecord(BASE_ECG_PATH / rec.path)
     dat = r.p_signal
     min_sig = np.min(dat, axis=0)
@@ -35,12 +34,15 @@ def wfdb_to_summary(rec):
     
     ret_val =  {
         'filename': rec.path,
+        'age': rec.ecg_age,
         'fs': r.fs,
         'mean': np.mean(dat),
         'sd': np.std(dat),
         'all_zeros': np.any(min_sig == max_sig),
         'any_nan': np.any(np.isnan(dat))
     }
+
+    return ret_val
 
 results = []
 ecg_data = pd.read_csv(BASE_DATA_PATH / f"{args.dataset}_ecgs.csv")
