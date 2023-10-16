@@ -24,22 +24,23 @@ args = parser.parse_args()
 
 import tensorflow as tf
 
+CANONICAL_SIG_ORDER = ['I', 'II', 'III', 'aVR', 'aVF', 'aVL', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6']
+
 def wfdb_to_summary(rec):
+
     r = wfdb.rdrecord(BASE_ECG_PATH / rec.path)
     dat = r.p_signal
     min_sig = np.min(dat, axis=0)
     max_sig = np.max(dat, axis=0)
     
-    gender_value = 1 if rec.gender == "M" else 0
-    
-    return {
+    ret_val =  {
         'filename': rec.path,
+        'fs': r.fs,
         'mean': np.mean(dat),
         'sd': np.std(dat),
         'all_zeros': np.any(min_sig == max_sig),
         'any_nan': np.any(np.isnan(dat))
     }
-
 
 results = []
 ecg_data = pd.read_csv(BASE_DATA_PATH / f"{args.dataset}_ecgs.csv")
