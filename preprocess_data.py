@@ -8,17 +8,18 @@ import numpy as np
 from tqdm import tqdm
 from argparse import ArgumentParser
 
-BASE_ECG_PATH = Path("/scratch/ajb5d/ecg/mimic-iv-ecg-diagnostic-electrocardiogram-matched-subset-1.0/")
-BASE_DATA_PATH = Path("./data/")
-OUTPUT_DATA_PATH = Path('/scratch/ajb5d/ecg/tfrecords')
-
 parser = ArgumentParser(
     prog = "summarize_data.py",
     description = "Summarize and report data quality"
 )
 
 parser.add_argument("--dataset", action = "store", required = True, choices = ['test', 'train', 'val'])
+parser.add_argument("--output", action = "store", required = True)
 args = parser.parse_args()
+
+BASE_ECG_PATH = Path("/scratch/ajb5d/ecg/mimic-iv-ecg-diagnostic-electrocardiogram-matched-subset-1.0/")
+BASE_DATA_PATH = Path("./data/")
+OUTPUT_DATA_PATH = Path(args.output)
 
 def wfdb_to_example(rec):
     r = wfdb.rdrecord(BASE_ECG_PATH / rec.path)
@@ -31,11 +32,14 @@ def wfdb_to_example(rec):
 
     dat = (dat - np.mean(dat, axis = 0)) / np.std(dat, axis = 0)
     gender_value = 1 if rec.gender == "M" else 0
+
+    
     
     feature = {
         'ecg/data': tf.train.Feature(float_list=tf.train.FloatList(value=dat.T.flatten())),
         'age': tf.train.Feature(float_list=tf.train.FloatList(value=[rec.ecg_age])),
-        'gender': tf.train.Feature(int64_list=tf.train.Int64List(value=[gender_value]))
+        'gender': tf.train.Feature(int64_list=tf.train.Int64List(value=[gender_value])),
+        'file_name': tf.train.Feature(int64_list=tf.train.Int64List(value=[rec.file_name])),
     }
 
     example_proto = tf.train.Example(features=tf.train.Features(feature=feature))
