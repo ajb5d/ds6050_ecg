@@ -12,10 +12,9 @@
 module load micromamba
 eval "$(micromamba shell hook --shell=bash)"
 micromamba activate ds6050-ecg
-
 module load singularity tensorflow/2.10.0
 
-python -m nbconvert \
-    --to script \
-    --stdout "$@" | 
-singularity run --nv $CONTAINERDIR/tensorflow-2.10.0.sif - 
+OUTPUT_FILE=$(basename -s .ipynb "$1")
+
+python -m nbconvert --to script "$1"
+singularity run --nv $CONTAINERDIR/tensorflow-2.10.0.sif "$OUTPUT_FILE.py"
