@@ -1,0 +1,63 @@
+---
+title: "Paper Figures"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+```
+
+```{r}
+prediction_dat <- read_csv(
+  "../data/resnet-age-outcomes.csv",
+  name_repair = janitor::make_clean_names,
+  col_types = cols(
+    x = col_skip(),
+    subject_id = col_double(),
+    hadm_id = col_double(),
+    stay_id = col_double(),
+    gender = col_character(),
+    admission_age = col_double(),
+    admittime = col_datetime(format = ""),
+    dischtime = col_datetime(format = ""),
+    icu_intime = col_datetime(format = ""),
+    icu_outtime = col_datetime(format = ""),
+    hospital_expire_flag = col_double(),
+    study_id = col_double(),
+    ecg_time = col_datetime(format = ""),
+    ecg_order = col_double(),
+    age_pred = col_double()
+  )
+)
+```
+
+```{r}
+prediction_dat %>%
+  filter(!is.na(age_pred)) %>%
+  ggplot(aes(admission_age, age_pred)) +
+  geom_hex() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              color = 'red') +
+  scale_fill_continuous(trans = "log10") +
+  stat_cor() + 
+  theme_bw(base_size = 14) +
+  labs(y = "Predicted Age, y",
+       x = "Actual Age, y",
+       fill = "Count",
+       title = "Actual versus Predicted Age")
+```
+
+```{r}
+prediction_dat %>%
+  filter(!is.na(age_pred)) %>%
+  mutate(delta_age = age_pred - admission_age,
+         age_bin = cut_number(admission_age, n = 5)) %>%
+  ggplot(aes(delta_age, color = age_bin)) +
+    geom_density() +
+    theme_bw(base_size = 14) +
+    labs(x = "Predicted - Actual Age", y = "Density", color = "Age Quintile")
+```
+
