@@ -83,3 +83,27 @@ ggsave("figure-age-distribution.eps", fig, width = 6, height = 4)
 fig
 ```
 
+
+
+```{r}
+fig <-
+  fs::dir_ls("../data/", glob = "*-history.csv") %>%
+  set_names() %>%
+  map(~read_csv(.x, show_col_types = FALSE)) %>%
+  list_rbind(names_to = "model") %>%
+  mutate(model = str_replace(model, ".*/", "") %>% str_replace("-history.csv", "")) %>%
+  separate(model, c("arch", "task"), remove = FALSE) %>%
+  mutate(task = if_else(task == "age2", "age", task)) %>%
+  select(model, task, epoch, loss, val_loss) %>%
+  pivot_longer(c(loss, val_loss)) %>%
+  ggplot(aes(epoch, value, linetype = name, color = model)) +
+    geom_line() +
+    facet_wrap(~task, scales="free_y") +
+    scale_linetype_discrete(labels = c("Training", "Validation")) + 
+    theme_bw(base_size = 14) +
+    labs(y = "Loss", x = "Epoch", color = "Model", linetype = "") 
+
+ggsave("figure-training-loss.eps", fig, width = 8, height = 4)
+fig
+```
+
