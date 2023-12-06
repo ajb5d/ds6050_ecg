@@ -50,6 +50,7 @@ fig <- prediction_dat %>%
        title = "Actual versus Predicted Age")
 
 ggsave("figure-actual-versus-predicted.eps", fig, width = 6, height = 4)
+ggsave("figure-actual-versus-predicted.pdf", fig, width = 6, height = 4)
 fig
 ```
 
@@ -67,6 +68,7 @@ fig <-
     labs(x = "Predicted - Actual Age", y = "Density", fill = "Age Quintile")
 
 ggsave("figure-error-density.eps", fig, width = 6, height = 4)
+ggsave("figure-error-density.pdf", fig, width = 6, height = 4)
 fig
 ```
 
@@ -80,6 +82,7 @@ fig <-
     labs(y = "Count of Patients", x = "Age")
 
 ggsave("figure-age-distribution.eps", fig, width = 6, height = 4)
+ggsave("figure-age-distribution.pdf", fig, width = 6, height = 4)
 fig
 ```
 
@@ -104,6 +107,7 @@ fig <-
     labs(y = "Loss", x = "Epoch", color = "Model", linetype = "") 
 
 ggsave("figure-training-loss.eps", fig, width = 8, height = 4)
+ggsave("figure-training-loss.pdf", fig, width = 8, height = 4)
 fig
 ```
 
