@@ -34,7 +34,7 @@ prediction_dat <- read_csv(
 ```
 
 ```{r}
-prediction_dat %>%
+fig <- prediction_dat %>%
   filter(!is.na(age_pred)) %>%
   ggplot(aes(admission_age, age_pred)) +
   geom_hex() +
@@ -48,16 +48,38 @@ prediction_dat %>%
        x = "Actual Age, y",
        fill = "Count",
        title = "Actual versus Predicted Age")
+
+ggsave("figure-actual-versus-predicted.eps", fig, width = 6, height = 4)
+fig
 ```
 
 ```{r}
-prediction_dat %>%
+fig <- 
+  prediction_dat %>%
   filter(!is.na(age_pred)) %>%
   mutate(delta_age = age_pred - admission_age,
          age_bin = cut_number(admission_age, n = 5)) %>%
-  ggplot(aes(delta_age, color = age_bin)) +
-    geom_density() +
+  ggplot(aes(delta_age, color = age_bin, fill = age_bin)) +
+    geom_density(alpha = 0.3) +
+    scale_color_discrete(guide = NULL) + 
+    coord_cartesian(expand = FALSE) + 
     theme_bw(base_size = 14) +
-    labs(x = "Predicted - Actual Age", y = "Density", color = "Age Quintile")
+    labs(x = "Predicted - Actual Age", y = "Density", fill = "Age Quintile")
+
+ggsave("figure-error-density.eps", fig, width = 6, height = 4)
+fig
+```
+
+```{r}
+fig <- 
+  prediction_dat %>%
+  ggplot(aes(admission_age)) +
+    geom_histogram(binwidth = 1) +
+    coord_cartesian(expand = FALSE) + 
+    theme_bw(base_size = 14) + 
+    labs(y = "Count of Patients", x = "Age")
+
+ggsave("figure-age-distribution.eps", fig, width = 6, height = 4)
+fig
 ```
 
